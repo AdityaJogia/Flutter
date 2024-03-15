@@ -1,0 +1,24 @@
+// INITDATABASE Function :::
+
+ Future<Database> initDatabase() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String databasePath = join(appDocDir.path, 'demo_database.db');
+    return await openDatabase(databasePath);
+  }
+
+// COPYTOROOT Function
+
+Future<bool> copyPasteAssetFileToRoot() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, "demo_database.db");
+
+    if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
+      ByteData data =
+          await rootBundle.load(join('assets/database', 'demo_database.db'));
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      await File(path).writeAsBytes(bytes);
+      return true;
+    }
+    return false;
+  }
